@@ -1,4 +1,4 @@
-package pqian.http;
+package com.github.pqian.http;
 
 import java.lang.ref.WeakReference;
 import java.util.Timer;

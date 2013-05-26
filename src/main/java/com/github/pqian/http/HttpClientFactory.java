@@ -1,4 +1,4 @@
-package pqian.http;
+package com.github.pqian.http;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ClientConnectionManager;

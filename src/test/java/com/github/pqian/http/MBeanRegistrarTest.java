@@ -1,4 +1,4 @@
-package pqian.http;
+package com.github.pqian.http;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -14,6 +14,11 @@ import org.apache.http.params.HttpConnectionParams;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.github.pqian.http.ClientConnMgrFactory;
+import com.github.pqian.http.HttpClientFactory;
+import com.github.pqian.http.HttpSettings;
+import com.github.pqian.http.MBeanRegistrar;
 
 public class MBeanRegistrarTest
 {

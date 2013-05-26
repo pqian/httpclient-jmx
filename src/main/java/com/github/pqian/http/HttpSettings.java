@@ -1,4 +1,4 @@
-package pqian.http;
+package com.github.pqian.http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
