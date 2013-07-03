@@ -57,16 +57,25 @@ public class MBeanRegistrar
      * Registers a named MBean to manage the specified {@link ClientConnectionManager}.
      * 
      * @param connMgr
-     * @param name
+     * @param mbeanName
      * @return
      */
-    public static String registerClientConnMgrSettings(final PoolingClientConnectionManager connMgr, final String name)
+    public static String registerClientConnMgrSettings(final PoolingClientConnectionManager connMgr, final String mbeanName)
     {
-        final String objectName = "pqian.http:type=ClientConnMgrSettings,name=" + createName(name);
+        final String objectName = createObjectNameForClientConnMgrSettings(mbeanName);
         final ClientConnMgrSettings connMgrSettings = new ClientConnMgrSettings(connMgr, objectName);
         registerMBean(connMgrSettings, objectName);
         CONN_MGR_MAP.put(connMgr, objectName);
         return objectName;
+    }
+    
+    /**
+     * Creates object name for instance of {@link ClientConnMgrSettings}
+     * @param mbeanName
+     * @return
+     */
+    public static String createObjectNameForClientConnMgrSettings(String mbeanName) {
+      return "pqian.http:type=ClientConnMgrSettings,name=" + createMbeanName(mbeanName);
     }
 
     /**
@@ -84,17 +93,26 @@ public class MBeanRegistrar
      * Registers a named MBean to manage the specified {@link HttpClient}.
      * 
      * @param client
-     * @param name
+     * @param mbeanName
      * @return
      */
-    public static String registerHttpClientSettings(final HttpClient client, final String name)
+    public static String registerHttpClientSettings(final HttpClient client, final String mbeanName)
     {
-        final String objectName = "pqian.http:type=HttpClientSettings,name=" + createName(name);
+        final String objectName = createObjectNameForHttpClientSettings(mbeanName);
         final HttpClientSettings clientSettings = new HttpClientSettings(client, objectName);
         registerMBean(clientSettings, objectName);
         return objectName;
     }
 
+    /**
+     * Creates object name for instance of {@link HttpClientSettings}
+     * @param mbeanName
+     * @return
+     */
+    public static String createObjectNameForHttpClientSettings(String mbeanName) {
+      return "pqian.http:type=HttpClientSettings,name=" + createMbeanName(mbeanName);
+    }
+    
     /**
      * Base register method.
      * 
@@ -159,15 +177,16 @@ public class MBeanRegistrar
     }
 
     /**
-     * Returns bound {@link ClientConnectionManager} by the given objectName.
+     * Returns bound {@link ClientConnectionManager} by the given mbeanName.
      * 
-     * @param objectName
+     * @param mbeanName
      * @return
      */
-    public static ClientConnectionManager findClientConnMgrByObjectName(final String objectName)
+    public static ClientConnectionManager findClientConnMgrByMbeanName(final String mbeanName)
     {
         if (CONN_MGR_MAP.isEmpty()) { return null; }
-        if (objectName == null) { return CONN_MGR_MAP.entrySet().iterator().next().getKey(); }
+        if (mbeanName == null) { return CONN_MGR_MAP.entrySet().iterator().next().getKey(); }
+        String objectName = createObjectNameForClientConnMgrSettings(mbeanName);
         for (final Entry<ClientConnectionManager, String> entry : CONN_MGR_MAP.entrySet())
         {
             if (objectName.equals(entry.getValue())) { return entry.getKey(); }
@@ -212,10 +231,10 @@ public class MBeanRegistrar
         return found;
     }
 
-    private static String createName(final String name)
+    private static String createMbeanName(final String mbeanName)
     {
-        if (name == null || name.isEmpty()) { return Thread.currentThread().getId() + "_" + new SimpleDateFormat("yyyyMMdd_HHmmss_SSS").format(new Date()); }
-        return name;
+        if (mbeanName == null || mbeanName.isEmpty()) { return Thread.currentThread().getId() + "_" + new SimpleDateFormat("yyyyMMdd_HHmmss_SSS").format(new Date()); }
+        return mbeanName;
     }
 
 }

@@ -2,7 +2,6 @@ package com.github.pqian.http;
 
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +56,7 @@ public class ClientConnMgrFactory
     {
         if (reuseExistingConnMgrIfPossible)
         {
-            final ClientConnectionManager mgr = MBeanRegistrar.findClientConnMgrByObjectName(null);
+            final ClientConnectionManager mgr = MBeanRegistrar.findClientConnMgrByMbeanName(mbeanName);
             if (mgr != null)
             {
                 LOG.info("Reuse clientConnectionManager {} being monitered by MBean", mgr);
