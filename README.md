@@ -12,7 +12,7 @@ A set of self (un)registerable MBeans to manage instances of ClientConnectionMan
 #### Features
 - A global settings Mbean.
 - Each ClientConnectionManager instance(i.e. PoolingClientConnectionManager at the moment) created with ClientConnMgrFactory has a settings MBean for it.
-- Each HttpClient instance create with HttpClientFactory has a settings Mbean for it.
+- Each HttpClient instance created with HttpClientFactory has a settings Mbean for it.
 - Once an instance is collected by Java GC, its settings MBean will be be self unregistered automaticly.
 
 
