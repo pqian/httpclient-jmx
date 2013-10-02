@@ -1,6 +1,9 @@
 package com.github.pqian.http;
 
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -103,9 +106,12 @@ public class HttpClientFactory
         //final HttpClient client = new DefaultHttpClient(connMgr);
         
     	final HttpClient client = HttpClientBuilder.create().setConnectionManager(connMgr).build();
-        final HttpParams params = client.getParams();
-        HttpConnectionParams.setConnectionTimeout(params, HttpSettings.INSTANCE.getDefaultConnectionTimeout());
-        HttpConnectionParams.setSoTimeout(params, HttpSettings.INSTANCE.getDefaultSocketTimeout());
+        RequestConfig config = RequestConfig.custom().setConnectionRequestTimeout(HttpSettings.INSTANCE.getDefaultConnectionTimeout())
+        											.setSocketTimeout(HttpSettings.INSTANCE.getDefaultSocketTimeout()).build();
+        
+        HttpGet httpGet = new HttpGet();
+        httpGet.setConfig(config);
+        
         final String objectName = MBeanRegistrar.registerHttpClientSettings(client, mbeanName);
         LOG.info("HttpClient {} is being monitered by Mbean {}", connMgr, objectName);
         return client;
