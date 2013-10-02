@@ -2,14 +2,9 @@ package com.github.pqian.http;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.conn.HttpClientConnectionManager;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +26,7 @@ public class HttpClientFactory
     }
 
     /**
-     * Creates a new {@link HttpClient} using an existing {@link ClientConnectionManager} if possible, otherwise using a new created implicitly.
+     * Creates a new {@link HttpClient} using an existing {@link HttpClientConnectionManager} if possible, otherwise using a new created implicitly.
      * 
      * @param reuseExistingConnMgrIfPossible
      * @return
@@ -56,7 +51,7 @@ public class HttpClientFactory
      * Creates a new {@link HttpClient} monitored by a {@link HttpClientSettings} MBean with the given name.
      * 
      * @param reuseExistingConnMgrIfPossible
-     *            use new {@link ClientConnectionManager} to create {@link HttpClient} if true
+     *            use new {@link HttpClientConnectionManager} to create {@link HttpClient} if true
      * @param mbeanName
      * @return
      */
@@ -67,7 +62,7 @@ public class HttpClientFactory
     }
 
     /**
-     * Creates a new {@link HttpClient} using the specified {@link ClientConnectionManager}
+     * Creates a new {@link HttpClient} using the specified {@link HttpClientConnectionManager}
      * 
      * @param connMgr
      * @return
@@ -78,7 +73,7 @@ public class HttpClientFactory
     }
 
     /**
-     * Creates a new {@link HttpClient} using the specified {@link ClientConnectionManager}, and register a {@link HttpClientSettings} MBean with the given name
+     * Creates a new {@link HttpClient} using the specified {@link HttpClientConnectionManager}, and register a {@link HttpClientSettings} MBean with the given name
      * for this client.
      * 
      * @param connMgr
@@ -95,7 +90,7 @@ public class HttpClientFactory
             }
             else
             {
-                LOG.warn("ClientConnectionManager {} cannot be monitered via JMX, only PoolingClientConnectionManager is possible", connMgr);
+                LOG.warn("HttpClientConnectionManager {} cannot be monitered via JMX, only PoolingHttpClientConnectionManager is possible", connMgr);
             }
         }
         return createNewInstance(connMgr, mbeanName);
@@ -103,17 +98,12 @@ public class HttpClientFactory
 
     private static HttpClient createNewInstance(final HttpClientConnectionManager connMgr, final String mbeanName)
     {
-        //final HttpClient client = new DefaultHttpClient(connMgr);
-        
-    	final HttpClient client = HttpClientBuilder.create().setConnectionManager(connMgr).build();
-        RequestConfig config = RequestConfig.custom().setConnectionRequestTimeout(HttpSettings.INSTANCE.getDefaultConnectionTimeout())
-        											.setSocketTimeout(HttpSettings.INSTANCE.getDefaultSocketTimeout()).build();
-        
-        HttpGet httpGet = new HttpGet();
-        httpGet.setConfig(config);
+        final RequestConfig config = RequestConfig.custom().setConnectionRequestTimeout(HttpSettings.INSTANCE.getDefaultConnectionTimeout())
+          .setSocketTimeout(HttpSettings.INSTANCE.getDefaultSocketTimeout()).build();
+    	final HttpClient client = HttpClientBuilder.create().setConnectionManager(connMgr).setDefaultRequestConfig(config).build();
         
         final String objectName = MBeanRegistrar.registerHttpClientSettings(client, mbeanName);
-        LOG.info("HttpClient {} is being monitered by Mbean {}", connMgr, objectName);
+        LOG.info("HttpClient {} is being monitered by Mbean {}", client, objectName);
         return client;
     }
 
