@@ -13,8 +13,8 @@ import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
 import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +24,7 @@ public class MBeanRegistrar
 
     private static final MBeanServer MBEAN_SERVER = findMBeanServer(null);
 
-    private static final WeakHashMap<ClientConnectionManager, String> CONN_MGR_MAP = new WeakHashMap<ClientConnectionManager, String>();
+    private static final WeakHashMap<HttpClientConnectionManager, String> CONN_MGR_MAP = new WeakHashMap<HttpClientConnectionManager, String>();
 
     private MBeanRegistrar()
     {}
@@ -48,7 +48,7 @@ public class MBeanRegistrar
      * @param connMgr
      * @return
      */
-    public static String registerClientConnMgrSettings(final PoolingClientConnectionManager connMgr)
+    public static String registerClientConnMgrSettings(final PoolingHttpClientConnectionManager connMgr)
     {
         return registerClientConnMgrSettings(connMgr, null);
     }
@@ -60,7 +60,7 @@ public class MBeanRegistrar
      * @param mbeanName
      * @return
      */
-    public static String registerClientConnMgrSettings(final PoolingClientConnectionManager connMgr, final String mbeanName)
+    public static String registerClientConnMgrSettings(final PoolingHttpClientConnectionManager connMgr, final String mbeanName)
     {
         final String objectName = createObjectNameForClientConnMgrSettings(mbeanName);
         final ClientConnMgrSettings connMgrSettings = new ClientConnMgrSettings(connMgr, objectName);
@@ -182,12 +182,12 @@ public class MBeanRegistrar
      * @param mbeanName
      * @return
      */
-    public static ClientConnectionManager findClientConnMgrByMbeanName(final String mbeanName)
+    public static HttpClientConnectionManager findClientConnMgrByMbeanName(final String mbeanName)
     {
         if (CONN_MGR_MAP.isEmpty()) { return null; }
         if (mbeanName == null) { return CONN_MGR_MAP.entrySet().iterator().next().getKey(); }
         String objectName = createObjectNameForClientConnMgrSettings(mbeanName);
-        for (final Entry<ClientConnectionManager, String> entry : CONN_MGR_MAP.entrySet())
+        for (final Entry<HttpClientConnectionManager, String> entry : CONN_MGR_MAP.entrySet())
         {
             if (objectName.equals(entry.getValue())) { return entry.getKey(); }
         }
@@ -200,7 +200,7 @@ public class MBeanRegistrar
      * @param connMgr
      * @return
      */
-    public static boolean isMapped(final ClientConnectionManager connMgr)
+    public static boolean isMapped(final HttpClientConnectionManager connMgr)
     {
         if (CONN_MGR_MAP.isEmpty()) { return false; }
         return CONN_MGR_MAP.containsKey(connMgr);

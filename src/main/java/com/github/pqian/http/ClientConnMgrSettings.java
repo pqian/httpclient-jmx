@@ -4,7 +4,7 @@ import java.lang.ref.WeakReference;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,12 +15,12 @@ public class ClientConnMgrSettings implements ClientConnMgrSettingsMBean
     private static final Timer DAEMON = new Timer("ClientConnMgrSettingsUnregistrar");
 
     private final String objectName;
-    private final WeakReference<PoolingClientConnectionManager> connMgrRef;
+    private final WeakReference<PoolingHttpClientConnectionManager> connMgrRef;
 
-    public ClientConnMgrSettings(final PoolingClientConnectionManager connMgr, final String objectName)
+    public ClientConnMgrSettings(final PoolingHttpClientConnectionManager connMgr, final String objectName)
     {
         this.objectName = objectName;
-        connMgrRef = new WeakReference<PoolingClientConnectionManager>(connMgr);
+        connMgrRef = new WeakReference<PoolingHttpClientConnectionManager>(connMgr);
 
         final TimerTask task = new TimerTask()
         {

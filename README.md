@@ -5,20 +5,21 @@ A set of self (un)registerable MBeans to manage instances of ClientConnectionMan
 
 
 #### Dependencies
+- httpclient 4.3, use new [PoolingHttpClientConnectionManager][1] instead of deprecated [PoolingClientConnectionManager][2]
 - httpclient 4.2, use new [PoolingClientConnectionManager][1] instead of deprecated [ThreadSafeClientConnManager][2]
 - slf4j-api
 
 
 #### Features
 - A global settings Mbean.
-- Each ClientConnectionManager instance(i.e. PoolingClientConnectionManager at the moment) created with ClientConnMgrFactory has a settings MBean for it.
+- Each HttpClientConnectionManager instance(i.e. PoolingHttpClientConnectionManager at the moment) created with ClientConnMgrFactory has a settings MBean for it.
 - Each HttpClient instance created with HttpClientFactory has a settings Mbean for it.
-- Once an instance is collected by Java GC, its settings MBean will be be self unregistered automaticly.
+- Once an instance is collected by Java GC, its settings MBean will be be self unregistered automatically.
 
 
 #### Examples
     // create a connMgr, and register a setting Mbean for it
-    ClientConnectionManager mgr = ClientConnMgrFactory.newInstance();
+    HttpClientConnectionManager mgr = ClientConnMgrFactory.newInstance();
 
     // reuse connMgr created above
     mgr2 = ClientConnMgrFactory.newInstance(true);
@@ -33,9 +34,9 @@ A set of self (un)registerable MBeans to manage instances of ClientConnectionMan
     assertNotSame(mgr, clt2.getConnectionManager());
 
     // create a connMgr explicitly, maybe it comes from a legacy system
-    ClientConnectionManager pmgr = new PoolingClientConnectionManager();
+    HttpClientConnectionManager pmgr = new PoolingHttpClientConnectionManager();
     // create httpClient using a specified connMgr, 
-    // if the connMgr is an instance of PoolingClientConnectionManager, register a Mbean for it. 
+    // if the connMgr is an instance of PoolingHttpClientConnectionManager, register a Mbean for it. 
     HttpClient clt3 = HttpClientFactory.newInstance(pmgr);
 
 

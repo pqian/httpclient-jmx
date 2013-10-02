@@ -7,9 +7,10 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.params.HttpConnectionParams;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,9 +40,9 @@ public class MBeanRegistrarTest
         MBeanRegistrar.registerHttpSettings();
 
         // create a connMgr
-        final ClientConnectionManager mgr = ClientConnMgrFactory.newInstance();
-        assertTrue(mgr instanceof PoolingClientConnectionManager);
-        final PoolingClientConnectionManager pmgr = (PoolingClientConnectionManager) mgr;
+        final HttpClientConnectionManager mgr = ClientConnMgrFactory.newInstance();
+        assertTrue(mgr instanceof PoolingHttpClientConnectionManager);
+        final PoolingHttpClientConnectionManager pmgr = (PoolingHttpClientConnectionManager) mgr;
         assertEquals(10, pmgr.getDefaultMaxPerRoute());
         assertEquals(100, pmgr.getMaxTotal());
 
@@ -70,7 +71,7 @@ public class MBeanRegistrarTest
         assertEquals(5000, HttpConnectionParams.getSoTimeout(clt.getParams()));
 
         // create a NEW connMgr explicitly
-        final PoolingClientConnectionManager pmgr2 = (PoolingClientConnectionManager) ClientConnMgrFactory.newInstance();
+        final PoolingHttpClientConnectionManager pmgr2 = (PoolingHttpClientConnectionManager) ClientConnMgrFactory.newInstance();
         assertNotSame(pmgr, pmgr2);
         // settings is fresh data
         assertEquals(11, pmgr2.getDefaultMaxPerRoute());
@@ -88,11 +89,11 @@ public class MBeanRegistrarTest
     @Test
     public void testMBeansAutoUnregister() throws InterruptedException
     {
-        PoolingClientConnectionManager mgr = new PoolingClientConnectionManager();
+        PoolingHttpClientConnectionManager mgr = new PoolingHttpClientConnectionManager();
         final String mgrObjectName = MBeanRegistrar.registerClientConnMgrSettings(mgr);
         assertTrue(MBeanRegistrar.isRegistered(mgrObjectName));
-
-        HttpClient clt = new DefaultHttpClient(mgr);
+        
+        HttpClient clt = HttpClientBuilder.create().setConnectionManager(mgr).build();
         final String cltObjectName = MBeanRegistrar.registerHttpClientSettings(clt);
         assertTrue(MBeanRegistrar.isRegistered(cltObjectName));
 
