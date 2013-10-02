@@ -3,6 +3,7 @@ package com.github.pqian.http;
 import java.lang.ref.WeakReference;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
@@ -63,5 +64,35 @@ public class HttpClientConnectionManagerSettings implements HttpClientConnection
         connMgrRef.get().setMaxTotal(maxTotal);
         LOG.info("{}: set maxTotal with {}", objectName, maxTotal);
     }
+
+	@Override
+	public int getLeased() {
+		return connMgrRef.get().getTotalStats().getLeased();
+	}
+
+	@Override
+	public int getPending() {
+		return connMgrRef.get().getTotalStats().getPending();
+	}
+
+	@Override
+	public int getAvailable() {
+		return connMgrRef.get().getTotalStats().getAvailable();
+	}
+
+	@Override
+	public int getMax() {
+		return connMgrRef.get().getTotalStats().getMax();
+	}
+
+	@Override
+	public void closeIdleConnections(long idleTimeoutInMillis) {
+		connMgrRef.get().closeIdleConnections(idleTimeoutInMillis, TimeUnit.MILLISECONDS);		
+	}
+
+	@Override
+	public void closeExpiredConnections() {
+		connMgrRef.get().closeExpiredConnections();		
+	}
 
 }

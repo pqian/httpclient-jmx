@@ -12,4 +12,16 @@ public interface HttpClientConnectionManagerMBean
     int getMaxTotal();
 
     void setMaxTotal(final int maxTotal);
+    
+    int getLeased();
+    
+    int getPending();
+    
+    int getAvailable();
+    
+    int getMax();
+    
+    void closeIdleConnections(long idleTimeoutInMillis);
+    
+    void closeExpiredConnections();
 }
