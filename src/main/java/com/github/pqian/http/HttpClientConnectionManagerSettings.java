@@ -8,16 +8,16 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClientConnMgrSettings implements ClientConnMgrSettingsMBean
+public class HttpClientConnectionManagerSettings implements HttpClientConnectionManagerMBean
 {
-    private static final Logger LOG = LoggerFactory.getLogger(ClientConnMgrSettings.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpClientConnectionManagerSettings.class);
 
     private static final Timer DAEMON = new Timer("ClientConnMgrSettingsUnregistrar");
 
     private final String objectName;
     private final WeakReference<PoolingHttpClientConnectionManager> connMgrRef;
 
-    public ClientConnMgrSettings(final PoolingHttpClientConnectionManager connMgr, final String objectName)
+    public HttpClientConnectionManagerSettings(final PoolingHttpClientConnectionManager connMgr, final String objectName)
     {
         this.objectName = objectName;
         connMgrRef = new WeakReference<PoolingHttpClientConnectionManager>(connMgr);

@@ -14,7 +14,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.pqian.http.ClientConnMgrFactory;
+import com.github.pqian.http.HttpClientConnectionManagerFactory;
 import com.github.pqian.http.HttpClientFactory;
 import com.github.pqian.http.HttpSettings;
 import com.github.pqian.http.MBeanRegistrar;
@@ -38,14 +38,14 @@ public class MBeanRegistrarTest
         MBeanRegistrar.registerHttpSettings();
 
         // create a connMgr
-        final HttpClientConnectionManager mgr = ClientConnMgrFactory.newInstance();
+        final HttpClientConnectionManager mgr = HttpClientConnectionManagerFactory.newInstance();
         assertTrue(mgr instanceof PoolingHttpClientConnectionManager);
         final PoolingHttpClientConnectionManager pmgr = (PoolingHttpClientConnectionManager) mgr;
         assertEquals(10, pmgr.getDefaultMaxPerRoute());
         assertEquals(100, pmgr.getMaxTotal());
 
         // reuse connMgr created above
-        assertSame(mgr, ClientConnMgrFactory.newInstance(true));
+        assertSame(mgr, HttpClientConnectionManagerFactory.newInstance(true));
 
         // create a httpClient with a NEW connMgr that is implicitly created
         Assert.assertNotSame(mgr, HttpClientFactory.newInstance(false).getConnectionManager());
@@ -57,7 +57,7 @@ public class MBeanRegistrarTest
         HttpSettings.INSTANCE.setDefaultMaxTotalConnections(101);
 
         // create a NEW connMgr explicitly
-        final PoolingHttpClientConnectionManager pmgr2 = (PoolingHttpClientConnectionManager) ClientConnMgrFactory.newInstance();
+        final PoolingHttpClientConnectionManager pmgr2 = (PoolingHttpClientConnectionManager) HttpClientConnectionManagerFactory.newInstance();
         assertNotSame(pmgr, pmgr2);
         // settings is fresh data
         assertEquals(11, pmgr2.getDefaultMaxPerRoute());

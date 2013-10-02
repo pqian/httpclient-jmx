@@ -62,7 +62,7 @@ public class HttpClientFactory
      */
     public static HttpClient newInstance(final boolean reuseExistingConnMgrIfPossible, final String mbeanName)
     {
-        final HttpClientConnectionManager connMgr = ClientConnMgrFactory.newInstance(reuseExistingConnMgrIfPossible);
+        final HttpClientConnectionManager connMgr = HttpClientConnectionManagerFactory.newInstance(reuseExistingConnMgrIfPossible);
         return createNewInstance(connMgr, mbeanName);
     }
 

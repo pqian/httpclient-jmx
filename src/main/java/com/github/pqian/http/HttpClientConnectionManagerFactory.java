@@ -5,11 +5,11 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClientConnMgrFactory
+public class HttpClientConnectionManagerFactory
 {
-    public static final Logger LOG = LoggerFactory.getLogger(ClientConnMgrFactory.class);
+    public static final Logger LOG = LoggerFactory.getLogger(HttpClientConnectionManagerFactory.class);
 
-    private ClientConnMgrFactory()
+    private HttpClientConnectionManagerFactory()
     {}
 
     /**
@@ -34,7 +34,7 @@ public class ClientConnMgrFactory
     }
 
     /**
-     * Creates a new {@link ClientConnectionManager} that is monitored by a {@link ClientConnMgrSettings} MBean with the given name.
+     * Creates a new {@link ClientConnectionManager} that is monitored by a {@link HttpClientConnectionManagerSettings} MBean with the given name.
      * 
      * @param mbeanName
      * @return
@@ -45,7 +45,7 @@ public class ClientConnMgrFactory
     }
 
     /**
-     * Returns a {@link ClientConnectionManager} monitored by a {@link ClientConnMgrSettings} MBean with the given name.
+     * Returns a {@link ClientConnectionManager} monitored by a {@link HttpClientConnectionManagerSettings} MBean with the given name.
      * 
      * @param reuseExistingConnMgrIfPossible
      *            return a existing {@link ClientConnectionManager} if true

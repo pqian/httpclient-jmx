@@ -3,7 +3,7 @@ package com.github.pqian.http;
 import javax.management.MXBean;
 
 @MXBean
-public interface ClientConnMgrSettingsMBean
+public interface HttpClientConnectionManagerMBean
 {
     int getDefaultMaxPerRoute();
 

@@ -63,14 +63,14 @@ public class MBeanRegistrar
     public static String registerClientConnMgrSettings(final PoolingHttpClientConnectionManager connMgr, final String mbeanName)
     {
         final String objectName = createObjectNameForClientConnMgrSettings(mbeanName);
-        final ClientConnMgrSettings connMgrSettings = new ClientConnMgrSettings(connMgr, objectName);
+        final HttpClientConnectionManagerSettings connMgrSettings = new HttpClientConnectionManagerSettings(connMgr, objectName);
         registerMBean(connMgrSettings, objectName);
         CONN_MGR_MAP.put(connMgr, objectName);
         return objectName;
     }
     
     /**
-     * Creates object name for instance of {@link ClientConnMgrSettings}
+     * Creates object name for instance of {@link HttpClientConnectionManagerSettings}
      * @param mbeanName
      * @return
      */
