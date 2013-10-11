@@ -1,9 +1,13 @@
 package com.github.pqian.http;
 
 import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.slf4j.Logger;
@@ -58,7 +62,7 @@ public class HttpClientFactory
      */
     public static HttpClient newInstance(final boolean reuseExistingConnMgrIfPossible, final String mbeanName)
     {
-        final ClientConnectionManager connMgr = ClientConnMgrFactory.newInstance(reuseExistingConnMgrIfPossible);
+        final HttpClientConnectionManager connMgr = HttpClientConnectionManagerFactory.newInstance(reuseExistingConnMgrIfPossible);
         return createNewInstance(connMgr, mbeanName);
     }
 
@@ -68,7 +72,7 @@ public class HttpClientFactory
      * @param connMgr
      * @return
      */
-    public static HttpClient newInstance(final ClientConnectionManager connMgr)
+    public static HttpClient newInstance(final HttpClientConnectionManager connMgr)
     {
         return newInstance(connMgr, null);
     }
@@ -81,13 +85,13 @@ public class HttpClientFactory
      * @param mbeanName
      * @return
      */
-    public static HttpClient newInstance(final ClientConnectionManager connMgr, final String mbeanName)
+    public static HttpClient newInstance(final HttpClientConnectionManager connMgr, final String mbeanName)
     {
         if (!MBeanRegistrar.isMapped(connMgr))
         {
-            if (connMgr instanceof PoolingClientConnectionManager)
+            if (connMgr instanceof PoolingHttpClientConnectionManager)
             {
-                MBeanRegistrar.registerClientConnMgrSettings((PoolingClientConnectionManager) connMgr);
+                MBeanRegistrar.registerClientConnMgrSettings((PoolingHttpClientConnectionManager) connMgr);
             }
             else
             {
@@ -97,12 +101,17 @@ public class HttpClientFactory
         return createNewInstance(connMgr, mbeanName);
     }
 
-    private static HttpClient createNewInstance(final ClientConnectionManager connMgr, final String mbeanName)
+    private static HttpClient createNewInstance(final HttpClientConnectionManager connMgr, final String mbeanName)
     {
-        final HttpClient client = new DefaultHttpClient(connMgr);
-        final HttpParams params = client.getParams();
-        HttpConnectionParams.setConnectionTimeout(params, HttpSettings.INSTANCE.getDefaultConnectionTimeout());
-        HttpConnectionParams.setSoTimeout(params, HttpSettings.INSTANCE.getDefaultSocketTimeout());
+        //final HttpClient client = new DefaultHttpClient(connMgr);
+        
+    	final HttpClient client = HttpClientBuilder.create().setConnectionManager(connMgr).build();
+        RequestConfig config = RequestConfig.custom().setConnectionRequestTimeout(HttpSettings.INSTANCE.getDefaultConnectionTimeout())
+        											.setSocketTimeout(HttpSettings.INSTANCE.getDefaultSocketTimeout()).build();
+        
+        HttpGet httpGet = new HttpGet();
+        httpGet.setConfig(config);
+        
         final String objectName = MBeanRegistrar.registerHttpClientSettings(client, mbeanName);
         LOG.info("HttpClient {} is being monitered by Mbean {}", connMgr, objectName);
         return client;

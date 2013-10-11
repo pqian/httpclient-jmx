@@ -1,15 +1,15 @@
 package com.github.pqian.http;
 
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClientConnMgrFactory
+public class HttpClientConnectionManagerFactory
 {
-    public static final Logger LOG = LoggerFactory.getLogger(ClientConnMgrFactory.class);
+    public static final Logger LOG = LoggerFactory.getLogger(HttpClientConnectionManagerFactory.class);
 
-    private ClientConnMgrFactory()
+    private HttpClientConnectionManagerFactory()
     {}
 
     /**
@@ -17,7 +17,7 @@ public class ClientConnMgrFactory
      * 
      * @return
      */
-    public static ClientConnectionManager newInstance()
+    public static HttpClientConnectionManager newInstance()
     {
         return newInstance(false);
     }
@@ -28,35 +28,35 @@ public class ClientConnMgrFactory
      * @param reuseExistingConnMgrIfPossible
      * @return
      */
-    public static ClientConnectionManager newInstance(final boolean reuseExistingConnMgrIfPossible)
+    public static HttpClientConnectionManager newInstance(final boolean reuseExistingConnMgrIfPossible)
     {
         return newInstance(reuseExistingConnMgrIfPossible, null);
     }
 
     /**
-     * Creates a new {@link ClientConnectionManager} that is monitored by a {@link ClientConnMgrSettings} MBean with the given name.
+     * Creates a new {@link ClientConnectionManager} that is monitored by a {@link HttpClientConnectionManagerSettings} MBean with the given name.
      * 
      * @param mbeanName
      * @return
      */
-    public static ClientConnectionManager newInstance(final String mbeanName)
+    public static HttpClientConnectionManager newInstance(final String mbeanName)
     {
         return newInstance(false, mbeanName);
     }
 
     /**
-     * Returns a {@link ClientConnectionManager} monitored by a {@link ClientConnMgrSettings} MBean with the given name.
+     * Returns a {@link ClientConnectionManager} monitored by a {@link HttpClientConnectionManagerSettings} MBean with the given name.
      * 
      * @param reuseExistingConnMgrIfPossible
      *            return a existing {@link ClientConnectionManager} if true
      * @param mbeanName
      * @return
      */
-    public static ClientConnectionManager newInstance(final boolean reuseExistingConnMgrIfPossible, final String mbeanName)
+    public static HttpClientConnectionManager newInstance(final boolean reuseExistingConnMgrIfPossible, final String mbeanName)
     {
         if (reuseExistingConnMgrIfPossible)
         {
-            final ClientConnectionManager mgr = MBeanRegistrar.findClientConnMgrByMbeanName(mbeanName);
+            final HttpClientConnectionManager mgr = MBeanRegistrar.findClientConnMgrByMbeanName(mbeanName);
             if (mgr != null)
             {
                 LOG.info("Reuse clientConnectionManager {} being monitered by MBean", mgr);
@@ -64,7 +64,7 @@ public class ClientConnMgrFactory
             }
         }
 
-        final PoolingClientConnectionManager newMgr = new PoolingClientConnectionManager();
+        final PoolingHttpClientConnectionManager newMgr = new PoolingHttpClientConnectionManager();
         newMgr.setDefaultMaxPerRoute(HttpSettings.INSTANCE.getDefaultMaxConnectionsPerRoute());
         newMgr.setMaxTotal(HttpSettings.INSTANCE.getDefaultMaxTotalConnections());
         final String objectName = MBeanRegistrar.registerClientConnMgrSettings(newMgr, mbeanName);

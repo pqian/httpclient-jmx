@@ -3,24 +3,25 @@ package com.github.pqian.http;
 import java.lang.ref.WeakReference;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClientConnMgrSettings implements ClientConnMgrSettingsMBean
+public class HttpClientConnectionManagerSettings implements HttpClientConnectionManagerMBean
 {
-    private static final Logger LOG = LoggerFactory.getLogger(ClientConnMgrSettings.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpClientConnectionManagerSettings.class);
 
     private static final Timer DAEMON = new Timer("ClientConnMgrSettingsUnregistrar");
 
     private final String objectName;
-    private final WeakReference<PoolingClientConnectionManager> connMgrRef;
+    private final WeakReference<PoolingHttpClientConnectionManager> connMgrRef;
 
-    public ClientConnMgrSettings(final PoolingClientConnectionManager connMgr, final String objectName)
+    public HttpClientConnectionManagerSettings(final PoolingHttpClientConnectionManager connMgr, final String objectName)
     {
         this.objectName = objectName;
-        connMgrRef = new WeakReference<PoolingClientConnectionManager>(connMgr);
+        connMgrRef = new WeakReference<PoolingHttpClientConnectionManager>(connMgr);
 
         final TimerTask task = new TimerTask()
         {
@@ -63,5 +64,35 @@ public class ClientConnMgrSettings implements ClientConnMgrSettingsMBean
         connMgrRef.get().setMaxTotal(maxTotal);
         LOG.info("{}: set maxTotal with {}", objectName, maxTotal);
     }
+
+	@Override
+	public int getLeased() {
+		return connMgrRef.get().getTotalStats().getLeased();
+	}
+
+	@Override
+	public int getPending() {
+		return connMgrRef.get().getTotalStats().getPending();
+	}
+
+	@Override
+	public int getAvailable() {
+		return connMgrRef.get().getTotalStats().getAvailable();
+	}
+
+	@Override
+	public int getMax() {
+		return connMgrRef.get().getTotalStats().getMax();
+	}
+
+	@Override
+	public void closeIdleConnections(long idleTimeoutInMillis) {
+		connMgrRef.get().closeIdleConnections(idleTimeoutInMillis, TimeUnit.MILLISECONDS);		
+	}
+
+	@Override
+	public void closeExpiredConnections() {
+		connMgrRef.get().closeExpiredConnections();		
+	}
 
 }
