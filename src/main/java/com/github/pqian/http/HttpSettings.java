@@ -15,52 +15,52 @@ public class HttpSettings implements HttpSettingsMBean
     public static final HttpSettings INSTANCE = new HttpSettings();
 
     @Override
-    public int getDefaultConnectionTimeout()
+    public synchronized int getDefaultConnectionTimeout()
     {
         return defaultConnectionTimeout;
     }
 
     @Override
-    public void setDefaultConnectionTimeout(final int defaultConnectionTimeout)
+    public synchronized void setDefaultConnectionTimeout(final int defaultConnectionTimeout)
     {
         HttpSettings.defaultConnectionTimeout = defaultConnectionTimeout;
         LOG.info("set defaultConnectionTimeout with {}", defaultConnectionTimeout);
     }
 
     @Override
-    public int getDefaultSocketTimeout()
+    public synchronized int getDefaultSocketTimeout()
     {
         return defaultSocketTimeout;
     }
 
     @Override
-    public void setDefaultSocketTimeout(final int defaultSocketTimeout)
+    public synchronized void setDefaultSocketTimeout(final int defaultSocketTimeout)
     {
         HttpSettings.defaultSocketTimeout = defaultSocketTimeout;
         LOG.info("set defaultSocketTimeout with {}", defaultSocketTimeout);
     }
 
     @Override
-    public int getDefaultMaxConnectionsPerRoute()
+    public synchronized int getDefaultMaxConnectionsPerRoute()
     {
         return defaultMaxConnectionsPerRoute;
     }
 
     @Override
-    public void setDefaultMaxConnectionsPerRoute(final int defaultMaxConnectionsPerRoute)
+    public synchronized void setDefaultMaxConnectionsPerRoute(final int defaultMaxConnectionsPerRoute)
     {
         HttpSettings.defaultMaxConnectionsPerRoute = defaultMaxConnectionsPerRoute;
         LOG.info("set defaultMaxConnectionsPerRoute with {}", defaultMaxConnectionsPerRoute);
     }
 
     @Override
-    public int getDefaultMaxTotalConnections()
+    public synchronized int getDefaultMaxTotalConnections()
     {
         return defaultMaxTotalConnections;
     }
 
     @Override
-    public void setDefaultMaxTotalConnections(final int defaultMaxTotalConnections)
+    public synchronized void setDefaultMaxTotalConnections(final int defaultMaxTotalConnections)
     {
         HttpSettings.defaultMaxTotalConnections = defaultMaxTotalConnections;
         LOG.info("set defaultMaxTotalConnections with {}", defaultMaxTotalConnections);
